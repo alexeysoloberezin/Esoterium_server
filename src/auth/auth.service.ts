@@ -155,6 +155,36 @@ export class AuthService {
     }
   }
 
+  async createClient(dto: SignUpDTO) {
+    let data = {
+      ...dto,
+      role: "client"
+    };
+
+    try {
+      const user = await this.prisma.user.create({
+        data,
+        select: { email: true, role: true } as any
+      });
+      throw new HttpException(
+        {
+          statusCode: 201,
+          message: "You have successfully created your account",
+          data: user
+        },
+        HttpStatus.CREATED
+      );
+    } catch (error) {
+      if (error.code === "P2002") {
+        throw new ConflictException(
+          "Почта уже занята"
+        );
+      } else {
+        throw error;
+      }
+    }
+  }
+
   async signin(dto: SignInDTO) {
     const userFound = await this.prisma.user.findUnique({
       where: { email: dto.email }

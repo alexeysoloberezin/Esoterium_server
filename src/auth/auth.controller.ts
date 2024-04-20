@@ -36,6 +36,14 @@ export class AuthController {
     return this.authService.createStudent({ ...dto, password });
   }
 
+  @Post('createClient')
+  @ApiCreatedResponse({ description: 'Успешно создан' })
+  @ApiConflictResponse({ description: 'Email уже занят' })
+  async createClient(@Request() req, @Body() dto: SignUpDTO ) {
+    const password = await argon.hash(dto.password);
+    return this.authService.createStudent({ ...dto, password });
+  }
+
   @Post('deleteStudent')
   @UseGuards(AuthGuard, AdminGuard)
   @ApiCreatedResponse({ description: 'Signup successful' })

@@ -9,6 +9,8 @@ import { FormListModule } from './form-list/form-list.module';
 import { ClientService } from './client/client.service';
 import { ClientController } from './client/client.controller';
 import { ClientModule } from './client/client.module';
+import { PaymentController } from './payment/payment.controller';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { ClientModule } from './client/client.module';
     TasksModule,
     FormListModule,
     ClientModule,
+    PaymentModule,
   ],
   providers: [FormListService, ClientService],
-  controllers: [FormListController, ClientController],
+  controllers: [FormListController, ClientController, PaymentController],
 })
 export class AppModule {}

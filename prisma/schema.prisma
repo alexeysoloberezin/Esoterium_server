@@ -27,6 +27,23 @@ model User {
   @@map("users")
 }
 
+model Logs {
+  id  String   @id @default(uuid())
+  email String?
+  type String?
+  message String?
+  isError Boolean? @default(false)
+
+  @@map("logs")
+}
+
+model PaymentTokens {
+  id  String   @id @default(uuid())
+  email String?
+  phone String?
+  @@map("paymentTokens")
+}
+
 model Task {
   id          String   @id @default(uuid())
   title       String
@@ -65,7 +82,7 @@ model formList {
 
 model Client {
   id                         String   @id @default(uuid())
-  name                       String
+  name                       String?
   phone                      String
   email                      String
   createdAt                  DateTime @default(now())

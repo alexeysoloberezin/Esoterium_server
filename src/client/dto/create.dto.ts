@@ -2,12 +2,11 @@ import { IsString, IsOptional, IsEmail, IsNotEmpty } from "class-validator";
 
 export class CreateClientDTO {
   @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
+  readonly id: string;
 
   @IsNotEmpty()
-  @IsString()
-  readonly name: string;
+  @IsEmail()
+  readonly email: string;
 
   @IsNotEmpty()
   @IsString()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateClientDTO } from "./dto/create.dto";
 
@@ -6,11 +6,45 @@ import { CreateClientDTO } from "./dto/create.dto";
 export class ClientService {
   constructor(private prisma: PrismaService) {}
 
-  async createClientAndAssignToStudent(clientData: CreateClientDTO) {
-    // Создаем нового клиента
+  async createClient (clientData: CreateClientDTO){
     const client = await this.prisma.client.create({
       data: clientData,
     });
+
+    return client
+  }
+
+  async deleteToken(token: string) {
+    try {
+      const paymentUser = await this.prisma.paymentTokens.delete({
+        where: {
+          id: token
+        }
+      });
+      console.log('token was deletd', paymentUser.id);
+      return paymentUser;
+    } catch (error) {
+      if (error?.code === 'P2025') {
+        throw new NotFoundException('Token not found');
+      }
+      throw new InternalServerErrorException('Internal server error');
+    }
+  }
+
+  async createClientAndAssignToStudent(clientData: CreateClientDTO) {
+    // Создаем нового клиента
+    const client = await this.prisma.client.create({
+      data: {
+        email: clientData.email,
+        phone: clientData.phone,
+      },
+    });
+
+    const removedToken = this.deleteToken(clientData.id)
+
+    if(!removedToken){
+      throw new Error('Token not deleted');
+    }
 
     // Находим первого студента с включенным queue
     const studentToAssign = await this.prisma.user.findFirst({
@@ -74,7 +108,10 @@ export class ClientService {
 
     return {
       client: newClient,
-      student: updatedStudent,
+      student: {
+        telegram: updatedStudent.telegram,
+        id: updatedStudent.id
+      },
     };
   }
 }
