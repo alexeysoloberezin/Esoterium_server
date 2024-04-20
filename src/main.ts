@@ -12,10 +12,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  const isDev = true
+  const isDev = false
+
+  console.log('FRONT_URL:', process.env.FRONT_URL);
+
+  const urlOrigin = isDev ? 'http://localhost:3000' : process.env.FRONT_URL
 
   app.enableCors({
-    origin: isDev ? 'http://localhost:3000' : 'https://apps.rk-env.ru',
+    origin: urlOrigin,
     // origin: 'https://apps.rk-env.ru',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -32,6 +36,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  await app.listen(port, () => console.log(`🛜   http://localhost:${port}`));
+  await app.listen(port, () => console.log(`🛜  PORT: ${port}`));
 }
 bootstrap();
