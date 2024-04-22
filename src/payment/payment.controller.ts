@@ -71,7 +71,7 @@ export class PaymentController {
     });
 
     if (!studentToAssign) {
-      throw new NotFoundException('No students available');
+      throw new NotFoundException('Нет доступных херомантов');
     }
 
 
