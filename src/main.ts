@@ -19,10 +19,10 @@ async function bootstrap() {
   const urlOrigin = isDev ? 'http://localhost:3000' : process.env.FRONT_URL
 
   app.enableCors({
-    origin: 'https://esoterium-client.vercel.app',
-    // origin: 'https://apps.rk-env.ru',
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
   });
 
 
