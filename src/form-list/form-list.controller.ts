@@ -9,6 +9,14 @@ import {AuthGuard} from "../auth/auth.guard";
 export class FormListController {
     constructor(private readonly formListService: FormListService) {}
 
+    @Get('/test')
+    @UseGuards(AuthGuard)
+    async test() {
+        return {
+            corsUrl: ''
+        }
+    }
+
     @Get()
     @UseGuards(AuthGuard)
     async findAll() {
