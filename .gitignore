@@ -2,6 +2,8 @@
 /dist
 /node_modules
 /prisma/identifier.sqlite
+identifier.sqlite
+
 # Logs
 npm-debug.log*
 pnpm-debug.log*

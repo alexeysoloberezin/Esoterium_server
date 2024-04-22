@@ -5,23 +5,28 @@ import axios from "axios";
 import { json } from "stream/consumers";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
+import { config } from 'dotenv';
+import * as process from "process";
 
+config();
 
 @Controller("payment")
 export class PaymentController {
   constructor(private readonly prismaService: PrismaService,   private jwt: JwtService,) {
   }
 
-  urlPayment =   "esoterium.payform.ru" || 'demo.payform.ru';
-  secretKey =  "2fe3a644a2173535c0f1e68c18dc54c4f74932e9cfc585b9d1de689716018971" || '';
+  baseUrl = 'esoterium.payform.ru'
+  urlPayment =   this.baseUrl || 'demo.payform.ru';
+  secretKey =  process.env.PAYMENT_KEY || '';
 
   price = "500";
   title = "Обучающие материалы";
-  urlSuccess = "http://localhost:3000/payment/success";
-  urlError = "http://localhost:3000/payment/error";
+  urlSuccess = `https://${this.baseUrl}/payment/success`;
+  urlError = `https://${this.baseUrl}/payment/error`;
 
   @Post('getPaymentToken')
   async getPaymentToken(@Body() {token}: {token: string}) {
+    console.log('process.env.PAYMENT_KEY', this.secretKey);
     const paymentUser = await this.prismaService.paymentTokens.findFirst({
       where: {
         id: token
