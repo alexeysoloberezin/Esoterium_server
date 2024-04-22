@@ -16,13 +16,14 @@ export class PaymentController {
   }
 
   baseUrl = 'esoterium.payform.ru'
+  frontUrl = 'https://esoterium-client.vercel.app'
   urlPayment =   this.baseUrl || 'demo.payform.ru';
   secretKey =  process.env.PAYMENT_KEY || '';
 
   price = "500";
   title = "Обучающие материалы";
-  urlSuccess = `https://${this.baseUrl}/payment/success`;
-  urlError = `https://${this.baseUrl}/payment/error`;
+  urlSuccess = `https://${this.frontUrl}/payment/success`;
+  urlError = `https://${this.frontUrl}/payment/error`;
 
   @Post('getPaymentToken')
   async getPaymentToken(@Body() {token}: {token: string}) {
