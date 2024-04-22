@@ -28,6 +28,21 @@ export class PaymentController {
   @Post('getPaymentToken')
   async getPaymentToken(@Body() {token}: {token: string}) {
     console.log('process.env.PAYMENT_KEY', this.secretKey);
+
+    const studentToAssign = await this.prismaService.user.findFirst({
+      where: {
+        role: 'student',
+        queue: true,
+      },
+      orderBy: {
+        createdAt: 'asc', // Сортируем по дате создания для определения порядка
+      },
+    });
+
+    if (!studentToAssign) {
+      throw new NotFoundException('No students available');
+    }
+
     const paymentUser = await this.prismaService.paymentTokens.findFirst({
       where: {
         id: token
