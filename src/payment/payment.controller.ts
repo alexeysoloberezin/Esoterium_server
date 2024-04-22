@@ -22,8 +22,8 @@ export class PaymentController {
 
   price = "500";
   title = "Обучающие материалы";
-  urlSuccess = `https://${this.frontUrl}/payment/success`;
-  urlError = `https://${this.frontUrl}/payment/error`;
+  urlSuccess = `${this.frontUrl}/payment/success`;
+  urlError = `${this.frontUrl}/payment/error`;
 
   @Post('getPaymentToken')
   async getPaymentToken(@Body() {token}: {token: string}) {
