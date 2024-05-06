@@ -74,7 +74,6 @@ export class PaymentController {
       throw new NotFoundException('Нет доступных херомантов');
     }
 
-
     const token = await this.prismaService.paymentTokens.create({ data: {
       email: dto.email,
       phone: dto.phone,

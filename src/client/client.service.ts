@@ -83,6 +83,9 @@ export class ClientService {
         id: {
           not: studentToAssign.id, // Исключаем текущего студента
         },
+        telegram: {
+          not: null, // Фильтр для учета только тех, у кого есть telegram
+        },
         queue: true, // Ищем других студентов с включенным queue
       },
       orderBy: {
