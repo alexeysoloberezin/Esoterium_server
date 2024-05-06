@@ -20,8 +20,8 @@ export class PaymentController {
   urlPayment =   this.baseUrl || 'demo.payform.ru';
   secretKey =  process.env.PAYMENT_KEY || '';
 
-  price = "500";
-  title = "Обучающие материалы";
+  price = "7500";
+  title = "Доступы";
   urlSuccess = `${this.frontUrl}/payment/success`;
   urlError = `${this.frontUrl}/payment/error`;
 
