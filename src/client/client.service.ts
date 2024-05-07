@@ -31,6 +31,30 @@ export class ClientService {
     }
   }
 
+  async clearQueueAndDeleteClients() {
+    try {
+      // Выключаем очередь у всех студентов
+      await this.prisma.user.updateMany({
+        where: {
+          role: 'student',
+        },
+        data: {
+          queue: false,
+        },
+      });
+
+      // Находим и удаляем всех клиентов
+      const deletedClients = await this.prisma.client.deleteMany();
+
+      return {
+        message: 'Queue cleared and all clients deleted',
+        deletedClientsCount: deletedClients.count,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to clear queue and delete clients');
+    }
+  }
+
   async createClientAndAssignToStudent(clientData: CreateClientDTO) {
     // Создаем нового клиента
     const client = await this.prisma.client.create({
