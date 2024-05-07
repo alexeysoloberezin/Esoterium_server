@@ -39,7 +39,7 @@ export class ClientService {
           role: 'student',
         },
         data: {
-          queue: false,
+          queue: true,
         },
       });
 
