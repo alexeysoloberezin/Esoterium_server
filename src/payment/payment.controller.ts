@@ -16,11 +16,20 @@ export class PaymentController {
   }
 
   baseUrl = 'esoterium.payform.ru'
-  frontUrl = 'https://esoterium-client.vercel.app'
+  frontUrl = 'https://esoterium.su'
   urlPayment =   this.baseUrl || 'demo.payform.ru';
   secretKey =  process.env.PAYMENT_KEY || '';
 
-  price = "7500";
+  prices = {
+    'Diagnost': {
+      price: '7500',
+      title: 'Диагностика',
+    },
+    'DiagnostPlusCorr': {
+      title: 'Диагностика+коррекция+подарок',
+      price: '15000'
+    },
+  };
   title = "Доступы";
   urlSuccess = `${this.frontUrl}/payment/success`;
   urlError = `${this.frontUrl}/payment/error`;
@@ -106,7 +115,13 @@ export class PaymentController {
     })
 
     try {
-      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&demo_mode=1&products[0][price]=${this.price}&products[0][quantity]=1&products[0][name]=${this.title}&customer_extra=Полная оплата курса&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
+      const product = this.prices[dto.typeProduct]
+
+      if(!product?.price){
+        throw new NotFoundException('Продукт не найден.');
+      }
+
+      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&demo_mode=1&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
     }catch (err){
       console.log('создание токена');
       throw new NotFoundException(err);

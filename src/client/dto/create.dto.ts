@@ -11,4 +11,8 @@ export class CreateClientDTO {
   @IsNotEmpty()
   @IsString()
   readonly phone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly typeProduct: string;
 }

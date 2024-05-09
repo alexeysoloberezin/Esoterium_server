@@ -12,14 +12,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  const isDev = false
+  // const isDev = false
 
-  console.log('FRONT_URL:', process.env.FRONT_URL);
+  // console.log('FRONT_URL:', process.env.FRONT_URL);
 
-  const urlOrigin = isDev ? 'http://localhost:3000' : process.env.FRONT_URL
+  // const urlOrigin = isDev ? 'http://localhost:3000' : process.env.FRONT_URL
 
   // app.enableCors({
-  //   origin: 'https://esoterium-client.vercel.app',
+  //   origin: 'https://esoterium.su/',
   //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   //   credentials: true,
   //   allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',

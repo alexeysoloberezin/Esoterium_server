@@ -9,4 +9,8 @@ export class getPaymentLinkDto {
   @IsString()
   @IsPhoneNumber()
   readonly phone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly typeProduct: string;
 }
