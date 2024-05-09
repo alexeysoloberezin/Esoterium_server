@@ -113,9 +113,9 @@ export class PaymentController {
       email: dto.email,
       phone: dto.phone
     })
+    const product = this.prices[dto.typeProduct]
 
     try {
-      const product = this.prices[dto.typeProduct]
 
       if(!product?.price){
         throw new NotFoundException('Продукт не найден.');
@@ -142,6 +142,7 @@ export class PaymentController {
 
     return {
       link: res.data,
+      product: product,
       token: token.id
     };
   }
