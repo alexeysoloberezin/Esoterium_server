@@ -40,7 +40,7 @@ model Logs {
 model PaymentTokens {
   id  String   @id @default(uuid())
   email String?
-  typeProduct String
+  typeProduct String?
   phone String?
   @@map("paymentTokens")
 }
