@@ -8,7 +8,7 @@ export class ClientService {
 
   async createClient (clientData: CreateClientDTO){
     const client = await this.prisma.client.create({
-      data: clientData,
+      data: clientData
     });
 
     return client
@@ -58,10 +58,7 @@ export class ClientService {
   async createClientAndAssignToStudent(clientData: CreateClientDTO) {
     // Создаем нового клиента
     const client = await this.prisma.client.create({
-      data: {
-        email: clientData.email,
-        phone: clientData.phone,
-      },
+      data: clientData
     });
 
     const removedToken = this.deleteToken(clientData.id)
