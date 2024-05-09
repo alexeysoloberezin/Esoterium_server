@@ -5,53 +5,53 @@ import axios from "axios";
 import { json } from "stream/consumers";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
-import { config } from 'dotenv';
+import { config } from "dotenv";
 import * as process from "process";
 
 config();
 
 @Controller("payment")
 export class PaymentController {
-  constructor(private readonly prismaService: PrismaService,   private jwt: JwtService,) {
+  constructor(private readonly prismaService: PrismaService, private jwt: JwtService) {
   }
 
-  baseUrl = 'esoterium.payform.ru'
-  frontUrl = 'https://esoterium.su'
-  urlPayment =   this.baseUrl || 'demo.payform.ru';
-  secretKey =  process.env.PAYMENT_KEY || '';
+  baseUrl = "esoterium.payform.ru";
+  frontUrl = "https://esoterium.su";
+  urlPayment = this.baseUrl || "demo.payform.ru";
+  secretKey = process.env.PAYMENT_KEY || "";
 
   prices = {
-    'Diagnost': {
-      price: '7500',
-      title: 'Диагностика',
+    "Diagnost": {
+      price: "7500",
+      title: "Диагностика"
     },
-    'DiagnostPlusCorr': {
-      title: 'Диагностика+коррекция+подарок',
-      price: '15000'
-    },
+    "DiagnostPlusCorr": {
+      title: "Диагностика+коррекция+подарок",
+      price: "15000"
+    }
   };
   title = "Доступы";
   urlSuccess = `${this.frontUrl}/payment/success`;
   urlError = `${this.frontUrl}/payment/error`;
 
-  @Post('getPaymentToken')
-  async getPaymentToken(@Body() {token}: {token: string}) {
-    console.log('process.env.PAYMENT_KEY', this.secretKey);
+  @Post("getPaymentToken")
+  async getPaymentToken(@Body() { token }: { token: string }) {
+    console.log("process.env.PAYMENT_KEY", this.secretKey);
 
     const paymentUser = await this.prismaService.paymentTokens.findFirst({
       where: {
         id: token
       }
     });
-    if(!paymentUser){
-      throw new NotFoundException('Not found');
+    if (!paymentUser) {
+      throw new NotFoundException("Not found");
     }
-    console.log('paymentUser', paymentUser);
-    return paymentUser
+    console.log("paymentUser", paymentUser);
+    return paymentUser;
   }
 
-  @Post('deleteToken')
-  async deleteToken(@Body() {token}: {token: string}) {
+  @Post("deleteToken")
+  async deleteToken(@Body() { token }: { token: string }) {
     try {
       const paymentUser = await this.prismaService.paymentTokens.delete({
         where: {
@@ -60,46 +60,49 @@ export class PaymentController {
       });
       return paymentUser;
     } catch (error) {
-      if (error?.code === 'P2025') {
-        throw new NotFoundException('Token not found');
+      if (error?.code === "P2025") {
+        throw new NotFoundException("Token not found");
       }
-      throw new InternalServerErrorException('Internal server error');
+      throw new InternalServerErrorException("Internal server error");
     }
   }
 
   @Post("getPaymentLink")
   async getPaymentLink(@Body() dto: getPaymentLinkDto) {
-    console.log('getPaymentLink getPaymentLink', dto);
+    console.log("getPaymentLink getPaymentLink", dto);
     const studentToAssign = await this.prismaService.user.findFirst({
       where: {
-        role: 'student',
+        role: "student",
         queue: true,
         telegram: {
-          not: null, // Фильтр для учета только тех, у кого есть telegram
-        },
+          not: null // Фильтр для учета только тех, у кого есть telegram
+        }
       },
       orderBy: {
-        createdAt: 'asc', // Сортируем по дате создания для определения порядка
-      },
+        createdAt: "asc" // Сортируем по дате создания для определения порядка
+      }
     });
 
     if (!studentToAssign) {
-      throw new NotFoundException('Нет доступных херомантов');
+      throw new NotFoundException("Нет доступных херомантов");
     }
 
-    const token = await this.prismaService.paymentTokens.create({ data: {
-      email: dto.email,
-      phone: dto.phone,
-    }});
+    const token = await this.prismaService.paymentTokens.create({
+      data: {
+        email: dto.email,
+        phone: dto.phone,
+        typeProduct: dto.typeProduct
+      }
+    });
 
-    if(!token){
-      const err = 'Токен для оплаты не был сгенерирован'
+    if (!token) {
+      const err = "Токен для оплаты не был сгенерирован";
       await this.prismaService.logs.create({
         data: {
           message: err,
           email: dto.email,
           isError: true,
-          type: 'paymentTokenCreate'
+          type: "paymentTokenCreate"
         }
       });
       throw new NotFoundException(err);
@@ -112,18 +115,18 @@ export class PaymentController {
     let paid_content = JSON.stringify({
       email: dto.email,
       phone: dto.phone
-    })
-    const product = this.prices[dto.typeProduct]
+    });
+    const product = this.prices[dto.typeProduct];
 
     try {
 
-      if(!product?.price){
-        throw new NotFoundException('Продукт не найден.');
+      if (!product?.price) {
+        throw new NotFoundException("Продукт не найден.");
       }
 
       res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&demo_mode=1&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
-    }catch (err){
-      console.log('создание токена');
+    } catch (err) {
+      console.log("создание токена");
       throw new NotFoundException(err);
     }
 
@@ -133,7 +136,7 @@ export class PaymentController {
           message: "Ссылка на оплату не может быть создана.",
           email: dto.email,
           isError: true,
-          type: 'getPaymentLink'
+          type: "getPaymentLink"
         }
       });
       throw new NotFoundException("Ссылка на оплату не может быть создана.");
