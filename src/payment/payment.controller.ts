@@ -69,7 +69,6 @@ export class PaymentController {
 
   @Post("getPaymentLink")
   async getPaymentLink(@Body() dto: getPaymentLinkDto) {
-    console.log("getPaymentLink getPaymentLink", dto);
     const studentToAssign = await this.prismaService.user.findFirst({
       where: {
         role: "student",
@@ -124,7 +123,7 @@ export class PaymentController {
         throw new NotFoundException("Продукт не найден.");
       }
 
-      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&demo_mode=1&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
+      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
     } catch (err) {
       console.log("создание токена");
       throw new NotFoundException(err);
