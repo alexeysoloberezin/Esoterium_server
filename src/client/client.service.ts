@@ -21,7 +21,6 @@ export class ClientService {
           id: token
         }
       });
-      console.log('token was deletd', paymentUser.id);
       return paymentUser;
     } catch (error) {
       if (error?.code === 'P2025') {

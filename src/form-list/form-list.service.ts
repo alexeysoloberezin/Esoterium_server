@@ -17,7 +17,6 @@ export class FormListService {
       const res = await this.prismaService.formList.create({
         data
       })
-      console.log('Заявка принята: ', data.email)
       return res
     } catch (error) {
       console.error('Ошибка создания пользователя: ', error.message);
@@ -57,7 +56,6 @@ export class FormListService {
       });
       return deleteResult
     } catch (error) {
-      console.log(error)
       throw new NotFoundException('No records found for the given dates');
     }
   }

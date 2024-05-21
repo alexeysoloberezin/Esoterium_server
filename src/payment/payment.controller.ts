@@ -36,7 +36,6 @@ export class PaymentController {
 
   @Post("getPaymentToken")
   async getPaymentToken(@Body() { token }: { token: string }) {
-    console.log("process.env.PAYMENT_KEY", this.secretKey);
 
     const paymentUser = await this.prismaService.paymentTokens.findFirst({
       where: {
@@ -46,7 +45,6 @@ export class PaymentController {
     if (!paymentUser) {
       throw new NotFoundException("Not found");
     }
-    console.log("paymentUser", paymentUser);
     return paymentUser;
   }
 
@@ -107,8 +105,6 @@ export class PaymentController {
       throw new NotFoundException(err);
     }
 
-    console.log(dto);
-
     let res;
 
     let paid_content = JSON.stringify({
@@ -125,7 +121,6 @@ export class PaymentController {
 
       res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
     } catch (err) {
-      console.log("создание токена");
       throw new NotFoundException(err);
     }
 

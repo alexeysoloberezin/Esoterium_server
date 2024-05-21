@@ -4,7 +4,6 @@ import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@
 export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    console.log('request', request);
     const user = request.user; // Предполагается, что user уже прикреплен к запросу в AuthGuard
 
     // console.log('user.role', user.role, user);
@@ -16,7 +15,6 @@ export class AdminGuard implements CanActivate {
       throw new ForbiddenException('Access Denied: No user object');
     }
 
-    console.log('user.role', user.role, user);
     if (user.role !== 'admin') {
       throw new ForbiddenException('Access Denied');
     }

@@ -23,7 +23,6 @@ export class AuthGuard implements CanActivate {
     const secret = this.config.get('JWT_SECRET');
     try {
       const payload = await this.jwt.verifyAsync(token, { secret });
-      console.log('payload', payload);
       request['user'] = payload;
     } catch (error) {
       throw new NotAcceptableException('Session timed out, please login again');
