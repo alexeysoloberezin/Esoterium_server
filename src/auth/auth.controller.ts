@@ -44,6 +44,13 @@ export class AuthController {
     return this.authService.createStudent({ ...dto, password });
   }
 
+  @Post('changeStatusAtv')
+  @ApiCreatedResponse({ description: 'Успешно изменян' })
+  async diactivate(@Body() {id}: {id: string}) {
+    return this.authService.diactivate({ id });
+  }
+
+
   @Post('deleteStudent')
   @UseGuards(AuthGuard, AdminGuard)
   @ApiCreatedResponse({ description: 'Signup successful' })

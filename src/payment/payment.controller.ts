@@ -73,7 +73,8 @@ export class PaymentController {
         queue: true,
         telegram: {
           not: null // Фильтр для учета только тех, у кого есть telegram
-        }
+        },
+        atv: true,
       },
       orderBy: {
         createdAt: "asc" // Сортируем по дате создания для определения порядка

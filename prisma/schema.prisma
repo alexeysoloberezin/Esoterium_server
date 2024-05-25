@@ -18,6 +18,7 @@ model User {
   clients   Client[]
   queue     Boolean  @default(true)
   role      String
+  atv       Boolean  @default(false)
   telegram  String? @unique
   paymentNumber String? @unique
   paymentType String?

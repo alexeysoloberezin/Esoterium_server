@@ -85,6 +85,29 @@ export class AuthService {
     }
   }
 
+  async diactivate({ id }) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id
+        },
+      });
+
+      return  await this.prisma.user.update({
+        where: { id },
+        data: {
+          atv: !user.atv
+        }
+      });
+    } catch (error) {
+      if (error.code === "P2025") {
+        throw new NotFoundException(`Студент с ID ${id} не найден`);
+      } else {
+        throw error;
+      }
+    }
+  }
+
   async createAdmin(dto: SignUpDTO) {
     if (dto.email !== "admin061@admin.com") {
       throw new HttpException(

@@ -74,6 +74,7 @@ export class ClientService {
         telegram: {
           not: null, // Фильтр для учета только тех, у кого есть telegram
         },
+        atv: true,
       },
       orderBy: {
         createdAt: 'asc', // Сортируем по дате создания для определения порядка
@@ -109,6 +110,7 @@ export class ClientService {
         telegram: {
           not: null, // Фильтр для учета только тех, у кого есть telegram
         },
+        atv: true,
         queue: true, // Ищем других студентов с включенным queue
       },
       orderBy: {
