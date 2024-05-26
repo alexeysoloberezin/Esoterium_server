@@ -68,7 +68,7 @@ export class PaymentController {
     }
   }
 
-  @Post("getPaymentList")
+  @Get("getPaymentList")
   async getPaymentList() {
     return await this.prismaService.payment.findMany();
   }
