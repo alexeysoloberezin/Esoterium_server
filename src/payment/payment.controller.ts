@@ -54,7 +54,7 @@ export class PaymentController {
 
   @Post("createPayment")
   async createPayment(@Body() res) {
-    console.log('createPayment', res);
+    console.log("createPayment", res);
 
     try {
       const payment = await this.prismaService.payment.create({
@@ -62,13 +62,16 @@ export class PaymentController {
           json: JSON.stringify(res)
         }
       });
-      return payment
-    }catch (err){
+      return payment;
+    } catch (err) {
       throw new InternalServerErrorException("Internal server error");
     }
   }
 
-
+  @Post("getPaymentList")
+  async getPaymentList() {
+    return await this.prismaService.payment.findMany();
+  }
 
   @Post("deleteToken")
   async deleteToken(@Body() { token }: { token: string }) {
@@ -96,7 +99,7 @@ export class PaymentController {
         telegram: {
           not: null // Фильтр для учета только тех, у кого есть telegram
         },
-        atv: true,
+        atv: true
       },
       orderBy: {
         createdAt: "asc" // Сортируем по дате создания для определения порядка
