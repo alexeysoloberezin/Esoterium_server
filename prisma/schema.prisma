@@ -95,3 +95,9 @@ model Client {
 
   @@map("clients")
 }
+
+model Payment {
+    id  String   @id @default(uuid())
+    json String?
+    @@map("payments")
+}
