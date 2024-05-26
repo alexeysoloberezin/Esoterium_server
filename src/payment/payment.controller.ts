@@ -28,6 +28,10 @@ export class PaymentController {
     "DiagnostPlusCorr": {
       title: "Диагностика+коррекция+подарок",
       price: "15000"
+    },
+    "test": {
+      title: "Тест",
+      price: "500"
     }
   };
   title = "Доступы";
