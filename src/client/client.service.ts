@@ -64,6 +64,7 @@ export class ClientService {
   }
 
   async createClientAndAssignToStudent(res) {
+
     const demoMode = res;
 
     if (res.payment_status !== "success") {

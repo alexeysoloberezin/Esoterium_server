@@ -68,6 +68,30 @@ export class PaymentController {
     }
   }
 
+  @Post("getPaymentInfoByPayform_order_id")
+  async getPaymentInfoByPayform_order_id(@Body() { token }: { token: string }){
+    try {
+      const payment = this.prismaService.payment.findFirst({
+        where: {
+          paymentToken: token
+        }
+      })
+
+      if(!payment){
+        return ''
+      }
+
+      const js = JSON.parse(payment.json)
+
+      if(js.payment_status === 'success'){
+          return payment
+      }
+
+    }catch (err){
+      throw new InternalServerErrorException("Internal server error");
+    }
+  }
+
   @Get("getPaymentList")
   async getPaymentList() {
     return await this.prismaService.payment.findMany();
