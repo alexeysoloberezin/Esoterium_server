@@ -31,6 +31,14 @@ export class ClientService {
     }
   }
 
+  async paymentsByEmail(email){
+    return await this.prisma.payment.findMany({
+      where: {
+        customerEmail: email
+      }
+    })
+  }
+
   async clearQueueAndDeleteClients() {
     try {
       // Выключаем очередь у всех студентов
