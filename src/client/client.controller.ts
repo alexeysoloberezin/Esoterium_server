@@ -14,8 +14,13 @@ export class ClientController {
   }
 
   @Post('create')
-  async profileIsCorrect(@Body() dto: CreateClientDTO) {
+  async profileIsCorrect(@Body() dto) {
     return this.clientService.createClientAndAssignToStudent(dto);
+  }
+
+  @Post('getPaymentsByEmail')
+  async getPaymentsByEmail(@Body() {email}: {email: string}) {
+    return this.clientService.paymentsByEmail(email);
   }
 
   @Post('restartClients')

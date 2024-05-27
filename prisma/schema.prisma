@@ -98,6 +98,9 @@ model Client {
 
 model Payment {
     id  String   @id @default(uuid())
+    orderId String?
+    customerEmail String?
+    paymentToken String?
     json String?
     @@map("payments")
 }

@@ -4,14 +4,15 @@ import { CreateClientDTO } from "./dto/create.dto";
 
 @Injectable()
 export class ClientService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+  }
 
-  async createClient (clientData: CreateClientDTO){
+  async createClient(clientData: CreateClientDTO) {
     const client = await this.prisma.client.create({
       data: clientData
     });
 
-    return client
+    return client;
   }
 
   async deleteToken(token: string) {
@@ -23,10 +24,10 @@ export class ClientService {
       });
       return paymentUser;
     } catch (error) {
-      if (error?.code === 'P2025') {
-        throw new NotFoundException('Token not found');
+      if (error?.code === "P2025") {
+        throw new NotFoundException("Token not found");
       }
-      throw new InternalServerErrorException('Internal server error');
+      throw new InternalServerErrorException("Internal server error");
     }
   }
 
@@ -35,98 +36,119 @@ export class ClientService {
       // Выключаем очередь у всех студентов
       await this.prisma.user.updateMany({
         where: {
-          role: 'student',
+          role: "student"
         },
         data: {
-          queue: true,
-        },
+          queue: true
+        }
       });
 
       // Находим и удаляем всех клиентов
       const deletedClients = await this.prisma.client.deleteMany();
 
       return {
-        message: 'Queue cleared and all clients deleted',
-        deletedClientsCount: deletedClients.count,
+        message: "Queue cleared and all clients deleted",
+        deletedClientsCount: deletedClients.count
       };
     } catch (error) {
-      throw new InternalServerErrorException('Failed to clear queue and delete clients');
+      throw new InternalServerErrorException("Failed to clear queue and delete clients");
     }
   }
 
-  async createClientAndAssignToStudent(clientData: CreateClientDTO) {
+  async createClientAndAssignToStudent(res) {
+    const demoMode = res;
+
+    if (res.payment_status !== "success") {
+      throw new Error("Bad Payment");
+    }
+
+    const findPayment = await this.prisma.payment.findFirst({
+      where: {
+        orderId: res.order_num
+      }
+    })
+
+    if(findPayment){
+      throw new Error("Payment Already Registered");
+    }
+
     // Создаем нового клиента
     const client = await this.prisma.client.create({
-      data: clientData
+      data: {
+        email: res.customer_email,
+        phone: res.customer_phone,
+        typeProduct: res.customer_extra
+      }
     });
 
-    const removedToken = this.deleteToken(clientData.id)
-
-    if(!removedToken){
-      throw new Error('Token not deleted');
-    }
+    // const removedToken = this.deleteToken(clientData.id);
+    //
+    // if (!removedToken) {
+    //   throw new Error("Token not deleted");
+    // }
 
     // Находим первого студента с включенным queue
     const studentToAssign = await this.prisma.user.findFirst({
       where: {
-        role: 'student',
+        role: "student",
         queue: true,
         telegram: {
-          not: null, // Фильтр для учета только тех, у кого есть telegram
+          not: null // Фильтр для учета только тех, у кого есть telegram
         },
-        atv: true,
+        atv: true
       },
       orderBy: {
-        createdAt: 'asc', // Сортируем по дате создания для определения порядка
-      },
+        createdAt: "asc" // Сортируем по дате создания для определения порядка
+      }
     });
 
     if (!studentToAssign) {
-      throw new Error('No students available');
+      throw new Error("No students available");
     }
+
 
     // Присваиваем клиента студенту и выключаем queue
     const updatedStudent = await this.prisma.user.update({
       where: {
-        id: studentToAssign.id,
+        id: studentToAssign.id
       },
       data: {
         clients: {
           connect: {
-            id: client.id,
-          },
+            id: client.id
+          }
         },
-        queue: false, // Выключаем queue
-      },
+        queue: false // Выключаем queue
+      }
     });
 
     // Проверяем, является ли студент последним в списке
     const isLastStudent = await this.prisma.user.findFirst({
       where: {
-        role: 'student',
+        role: "student",
         id: {
-          not: studentToAssign.id, // Исключаем текущего студента
+          not: studentToAssign.id // Исключаем текущего студента
         },
         telegram: {
-          not: null, // Фильтр для учета только тех, у кого есть telegram
+          not: null // Фильтр для учета только тех, у кого есть telegram
         },
         atv: true,
-        queue: true, // Ищем других студентов с включенным queue
+        queue: true // Ищем других студентов с включенным queue
       },
       orderBy: {
-        createdAt: 'asc',
-      },
+        createdAt: "asc"
+      }
     }) === null;
 
     // Если это последний студент, включаем queue для всех студентов
     if (isLastStudent) {
       await this.prisma.user.updateMany({
         where: {
-          role: 'student',
+          role: "student"
         },
         data: {
-          queue: true, // Включаем queue
-        },
+          queue: true // Включаем queue
+        }
       });
     }
 
@@ -134,12 +156,21 @@ export class ClientService {
       where: { id: client.id }
     });
 
-    return {
-      client: newClient,
-      student: {
-        telegram: updatedStudent.telegram,
-        id: updatedStudent.id
-      },
-    };
+    const payment = await this.prisma.payment.create({
+      data: {
+        json: JSON.stringify({
+          ...res,
+          client: newClient,
+          student: {
+            telegram: updatedStudent.telegram,
+            id: updatedStudent.id
+          }
+        }),
+        paymentToken: res.order_num,
+        customerEmail: newClient.email
+      }
+    });
+
+    return payment;
   }
 }
