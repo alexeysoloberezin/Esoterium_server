@@ -78,7 +78,7 @@ export class PaymentController {
       })
 
       if(!payment){
-        return ''
+        throw new NotFoundException("Payment not found");
       }
 
       const js = JSON.parse(payment.json)
