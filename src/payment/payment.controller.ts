@@ -10,7 +10,7 @@ import * as process from "process";
 
 config();
 
-  @Controller("payment")
+@Controller("payment")
 export class PaymentController {
   constructor(private readonly prismaService: PrismaService, private jwt: JwtService) {
   }

@@ -37,6 +37,8 @@ export class ClientService {
         customerEmail: email
       }
     })
+    console.log('email', email);
+    console.log('payment', payment);
 
     if(!payment || !payment.json){
       throw new NotFoundException("Payment not found");
