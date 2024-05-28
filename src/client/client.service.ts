@@ -63,6 +63,14 @@ export class ClientService {
     }
   }
 
+  async clearPaymentList(){
+    try {
+      return await this.prisma.payment.deleteMany();
+    }catch (err){
+      throw new Error("Error");
+    }
+  }
+
   async createClientAndAssignToStudent(res) {
 
     const demoMode = res;
@@ -73,7 +81,7 @@ export class ClientService {
 
     const findPayment = await this.prisma.payment.findFirst({
       where: {
-        orderId: res.order_num
+        paymentToken: res.order_num
       }
     })
 

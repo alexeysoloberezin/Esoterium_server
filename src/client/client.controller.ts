@@ -13,6 +13,11 @@ export class ClientController {
     return this.clientService.createClient(dto);
   }
 
+  @Post('clearPaymentList')
+  async clearPaymentList(){
+    return this.clientService.clearPaymentList()
+  }
+
   @Post('create')
   async profileIsCorrect(@Body() dto) {
     return this.clientService.createClientAndAssignToStudent(dto);
