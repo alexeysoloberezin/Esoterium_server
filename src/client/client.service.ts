@@ -32,7 +32,34 @@ export class ClientService {
   }
 
   async paymentsByEmail(email){
-    return await this.prisma.payment.findMany({
+    const payment = await this.prisma.payment.findMany({
+      where: {
+        customerEmail: email
+      }
+    })
+
+    if(!payment || !payment.json){
+      throw new NotFoundException("Payment not found");
+    }
+
+    const list = JSON.parse(payment.json)
+
+    if(!Array.isArray(list) || list.length === 0){
+      return {
+        message: 'Not found',
+        count: 0
+      }
+    }
+
+    return {
+      email: email,
+      message: `Найдено оплат: ${list.length}`,
+      count: list.length
+    }
+  }
+
+  async paymentsByEmailAndPhone(email, phone){
+    return  await this.prisma.payment.findMany({
       where: {
         customerEmail: email
       }

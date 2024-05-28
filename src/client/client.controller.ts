@@ -18,6 +18,11 @@ export class ClientController {
     return this.clientService.clearPaymentList()
   }
 
+  @Post('paymentsByEmailAndPhone')
+  async paymentsByEmailAndPhone(@Body() {email, phone}: {email: string, phone: string}){
+    return this.clientService.paymentsByEmailAndPhone(email, phone)
+  }
+
   @Post('create')
   async profileIsCorrect(@Body() dto) {
     return this.clientService.createClientAndAssignToStudent(dto);
