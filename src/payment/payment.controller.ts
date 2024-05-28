@@ -10,7 +10,7 @@ import * as process from "process";
 
 config();
 
-@Controller("payment")
+  @Controller("payment")
 export class PaymentController {
   constructor(private readonly prismaService: PrismaService, private jwt: JwtService) {
   }
@@ -90,6 +90,15 @@ export class PaymentController {
     }catch (err){
       throw new InternalServerErrorException("Internal server error");
     }
+  }
+
+  @Post("getPaymentListByEmail")
+  async getPaymentListByEmail(@Body() {email}: {email: string}) {
+    return await this.prismaService.payment.findMany({
+      where: {
+        customerEmail: email
+      }
+    });
   }
 
   @Get("getPaymentList")
