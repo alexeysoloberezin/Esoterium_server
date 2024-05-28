@@ -40,13 +40,8 @@ export class ClientService {
     console.log('email', email);
     console.log('payment', payment);
 
-    if(!payment || !payment.json){
-      throw new NotFoundException("Payment not found");
-    }
 
-    const list = payment.json ? JSON.parse(payment.json) : []
-
-    if(!Array.isArray(list) || list.length === 0){
+    if(!Array.isArray(payment) || payment.length === 0){
       return {
         message: 'Not found',
         count: 0
@@ -55,8 +50,8 @@ export class ClientService {
 
     return {
       email: email,
-      message: `Найдено оплат: ${list.length}`,
-      count: list.length
+      message: `Найдено оплат: ${payment.length}`,
+      count: payment.length
     }
   }
 
