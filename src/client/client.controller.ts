@@ -28,6 +28,11 @@ export class ClientController {
     return this.clientService.createClientAndAssignToStudent(dto);
   }
 
+  @Post('checkPhone')
+  async checkPhone(@Body() {email, phone}: {email: string, phone: string}){
+    return this.clientService.checkPhone(email, phone)
+  }
+
   @Post('getPaymentsByEmail')
   async getPaymentsByEmail(@Body() {email}: {email: string}) {
     return this.clientService.paymentsByEmail(email);

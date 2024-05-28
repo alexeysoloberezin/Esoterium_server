@@ -31,15 +31,47 @@ export class ClientService {
     }
   }
 
+  async checkPhone(email, phone){
+    const payment: any = await this.prisma.payment.findMany({
+      where: {
+        customerEmail: email
+      }
+    })
+
+    if(!Array.isArray(payment) || payment.length === 0){
+      return {
+        message: 'Not found',
+        count: 0
+      }
+    }
+
+    let correctPhone = false
+
+    payment.forEach(el => {
+      const json = el.json ? JSON.parse(el.json) : null
+
+      if(json){
+        if(json.phone === phone){
+          correctPhone = true
+        }
+      }
+    })
+
+    return correctPhone ? {
+      message: "Подтвержение пройдено!",
+      status: 'success',
+    } : {
+      message: "Номер не найден!",
+      status: 'error',
+    }
+  }
+
   async paymentsByEmail(email){
     const payment: any = await this.prisma.payment.findMany({
       where: {
         customerEmail: email
       }
     })
-    console.log('email', email);
-    console.log('payment', payment);
-
 
     if(!Array.isArray(payment) || payment.length === 0){
       return {
