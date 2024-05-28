@@ -71,7 +71,7 @@ export class PaymentController {
   @Post("getPaymentInfoByPayform_order_id")
   async getPaymentInfoByPayform_order_id(@Body() { token }: { token: string }){
     try {
-      const payment = await this.prismaService.payment.findFirst({
+      const payment: any = await this.prismaService.payment.findFirst({
         where: {
           paymentToken: token
         }
@@ -81,9 +81,9 @@ export class PaymentController {
         throw new NotFoundException("Payment not found");
       }
 
-      const js = JSON.parse(payment.json)
+      const js = payment.json ? JSON.parse(payment.json) : null
 
-      if(js.payment_status === 'success'){
+      if(js && js.payment_status === 'success'){
           return payment
       }
 
