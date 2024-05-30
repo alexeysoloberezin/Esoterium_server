@@ -52,7 +52,7 @@ export class ClientService {
 
       console.log('1');
       if (json) {
-        const jsonPhoneLast4 = json.phone.slice(-4);
+        const jsonPhoneLast4 = json.customer_phone.slice(-4);
         const phoneLast4 = phone.slice(-4);
         console.log('jsonPhoneLast4', jsonPhoneLast4);
         console.log('phoneLast4', phoneLast4);
