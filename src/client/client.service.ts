@@ -48,21 +48,33 @@ export class ClientService {
     let correctPhone = false
 
     payment.forEach(el => {
-      const json = el.json ? JSON.parse(el.json) : null
+      const json = el.json ? JSON.parse(el.json) : null;
 
-      if(json){
-        if(json.phone === phone){
-          correctPhone = true
+      console.log('1');
+      if (json) {
+        const jsonPhoneLast4 = json.phone.slice(-4);
+        const phoneLast4 = phone.slice(-4);
+        console.log('jsonPhoneLast4', jsonPhoneLast4);
+        console.log('phoneLast4', phoneLast4);
+
+        if (jsonPhoneLast4 === phoneLast4) {
+          correctPhone = true;
         }
       }
     })
 
-    return correctPhone ? {
+    if(!correctPhone){
+      return {
+        message: "Номер не найден!",
+        status: 'error',
+        paymentList: []
+      }
+    }
+
+    return {
       message: "Подтвержение пройдено!",
       status: 'success',
-    } : {
-      message: "Номер не найден!",
-      status: 'error',
+      paymentList: payment
     }
   }
 
