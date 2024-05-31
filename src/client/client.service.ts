@@ -140,6 +140,7 @@ export class ClientService {
   }
 
   async createClientAndAssignToStudent(res) {
+    console.log('createClientAndAssignToStudent', res);
 
     const demoMode = res;
 
