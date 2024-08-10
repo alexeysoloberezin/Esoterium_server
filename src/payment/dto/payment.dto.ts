@@ -13,4 +13,7 @@ export class getPaymentLinkDto {
   @IsNotEmpty()
   @IsString()
   readonly typeProduct: string;
+
+  @IsString()
+  readonly promocode: string;
 }
