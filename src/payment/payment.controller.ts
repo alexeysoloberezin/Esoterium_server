@@ -178,9 +178,13 @@ export class PaymentController {
         throw new NotFoundException("Продукт не найден.");
       }
 
-      const promo = dto.promocode || ''
+      const promos = {
+        '4432': '1000'
+      }
 
-      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&ref=${promo}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
+      const promo = promos[dto.promocode] || '0'
+
+      res = await axios.get(`https://${this.urlPayment}/?order_id=${token.id}&discount_value=${promo}&customer_phone=${dto.phone}&acquiring=sbrf&customer_email=${dto.email}&secret_key=${this.secretKey}&products[0][price]=${product.price}&products[0][quantity]=1&products[0][name]=${product.title}&customer_extra=${product.title}&do=link&urlError=${this.urlError}&urlSuccess=${this.urlSuccess}&paid_content=${paid_content}`);
     } catch (err) {
       throw new NotFoundException(err);
     }
